@@ -7,4 +7,4 @@ def download_file(url, filename):
     with open(filename, 'wb') as f:
         f.write(response.content)
 
-download_file('https://opendata.maryland.gov/api/views/tzjz-wfys/rows.csv?accessType=DOWNLOAD', 'solid_waste_violations')
+download_file('https://opendata.maryland.gov/api/views/tzjz-wfys/rows.csv?accessType=DOWNLOAD', 'solid_waste_violations.csv')
