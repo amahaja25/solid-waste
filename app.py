@@ -1,4 +1,3 @@
-# going to do the baseline stuff from the news app tutorial with flask so i at least have something to start out with.
 import datetime
 from flask import Flask, render_template
 from peewee import *
