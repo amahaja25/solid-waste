@@ -3,6 +3,7 @@
   <head>
     <title>Trips</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="static/style.css">
   </head>
   <body>
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -11,6 +12,24 @@
       <div class="jumbotron">
         <div class="container">
           <h1 class="display-4">Sewage Sludge</h1>
+          <h3 class="display-6">This is a paragraph about what the sewage sludge violation is.</h3>
+          <br>
+        <table border=1 cellpadding=7>
+          <tr>
+            <th>Site Name</th>
+            <th>County</th>
+            <th>Violation Date</th>
+            <th>Violation Type</th>
+        </tr>
+        {% for violation in sewage_list %}
+        <tr>
+          <td>{{ violation['site_name'] }}</td>
+          <td>{{ violation['county'] }}</td>
+          <td>{{ violation['violation_date'] }}</td>
+          <td>{{ violation['media'] }}</td>
+        </tr>
+        {% endfor %}
+      </table>
           <br>
           <br>
           <br>

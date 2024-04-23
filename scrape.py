@@ -2,6 +2,8 @@ import os
 import requests
 import pandas as pd
 import uuid
+from playwright.sync_api import sync_playwright
+import shutil
 
 def clean_column_names(df):
     df.columns = df.columns.str.lower().str.replace(r'[^\w\s]', '', regex=True).str.replace(' ', '_')
