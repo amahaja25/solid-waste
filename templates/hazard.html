@@ -15,6 +15,7 @@
           <br>
           <h3 class="display-6">This is a paragraph about what the hazardous waste violation is.</h3>
           <br>
+          <h4>There are currently {{ hazardous_count }} total hazardous waste violations.</h4>
         <table border=1 cellpadding=7>
           <tr>
             <th>Site Name</th>
@@ -24,7 +25,7 @@
         </tr>
         {% for violation in hazard_list %}
         <tr>
-          <td>{{ violation['site_name'] }}</td>
+          <td><a href="/site/{{ violation['site_no'] }}">{{ violation['site_name'] }}</a></td>
           <td>{{ violation['county'] }}</td>
           <td>{{ violation['violation_date'] }}</td>
           <td>{{ violation['media'] }}</td>

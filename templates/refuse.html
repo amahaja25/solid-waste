@@ -15,6 +15,8 @@
           <br>
           <h3 class="display-6">This is a paragraph about what the refuse disposal violation is.</h3>
           <br>
+          <h4>There are currently {{ refuse_count }} total refuse disposal violations.</h4>
+          <br>
         <table border=1 cellpadding=7>
           <tr>
             <th>Site Name</th>
@@ -24,13 +26,28 @@
         </tr>
         {% for violation in refuse_list %}
         <tr>
-          <td>{{ violation['site_name'] }}</td>
+          <td><a href="/site/{{ violation['site_no'] }}">{{ violation['site_name'] }}</a></td>
           <td>{{ violation['county'] }}</td>
           <td>{{ violation['violation_date'] }}</td>
           <td>{{ violation['media'] }}</td>
         </tr>
         {% endfor %}
       </table>
+      <nav>
+        <ul class="pagination">
+            <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+                <a class="page-link" href="?page={{ page - 1 }}">Previous</a>
+            </li>
+            {% for i in range(1, total_pages + 1) %}
+            <li class="page-item {% if i == page %}active{% endif %}">
+                <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+            </li>
+            {% endfor %}
+            <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+                <a class="page-link" href="?page={{ page + 1 }}">Next</a>
+            </li>
+        </ul>
+    </nav>
           <br>
           <br>
           <br>

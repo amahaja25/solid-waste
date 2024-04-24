@@ -23,6 +23,6 @@ def download_and_clean(url, filename):
     df.to_csv(filename, index=False)
 
 url = 'https://opendata.maryland.gov/api/views/tzjz-wfys/rows.csv?accessType=DOWNLOAD'
-filename = 'solid_waste_violations.csv'
+filename = 'static/solid_waste_violations.csv'
 
-download_and_clean(url, filename)
+download_and_clean(url,filename)

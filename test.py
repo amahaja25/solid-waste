@@ -4,6 +4,9 @@ import shutil
 
 def main():
     url = "https://opendata.maryland.gov/stories/s/LMA-Solid-Waste-Program-Violation/rqzj-6qrm/"
+    pdf_folder = "pdfs"
+    os.makedirs(pdf_folder, exist_ok=True)
+
     with sync_playwright() as p:
         browser = p.chromium.launch()
         context = browser.new_context()
@@ -42,7 +45,7 @@ def main():
                 downloaded_file_path = download.path()
 
                 # Generate the desired filename for the PDF
-                pdf_filename = f"{pdf_id}.pdf"
+                pdf_filename = f"{pdf_folder}/{pdf_id}.pdf" 
 
                 # Move the downloaded file to the desired location with the new filename
                 shutil.move(downloaded_file_path, pdf_filename)
