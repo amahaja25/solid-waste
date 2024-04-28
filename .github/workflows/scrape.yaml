@@ -22,9 +22,9 @@ jobs:
           python-version: '3.10.13'
 
       - name: Install dependencies
-        run: pip install requests pandas pytest-playwright shutil, playwright install
+        run: pip install requests pandas pytest-playwright
         
-       - name: Install Playwright and browsers
+      - name: Install Playwright and browsers
         run: |
           npm install playwright
           npx playwright install
