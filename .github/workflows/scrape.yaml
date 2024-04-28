@@ -22,7 +22,7 @@ jobs:
           python-version: '3.10.13'
 
       - name: Install dependencies
-        run: requests csv pangas uuid playwright.sync_api shutil
+        run: pip install requests csv pandas uuid playwright.sync_api shutil
 
       
 
