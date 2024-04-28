@@ -1,0 +1,42 @@
+name: Test
+
+
+on:
+  push:
+    branches:
+      - '*'
+  schedule: 
+    - cron: "0 12 * * *"
+
+
+
+jobs:
+  scheduled:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10.13'
+
+      - name: Install dependencies
+        run: pip install pytest-playwright
+        
+      - name: Install Playwright and browsers
+        run: |
+          npm install playwright
+          npx playwright install
+
+      - name: run scraper
+        run: python test.py
+
+      - name: "Commit and push if it changed"
+        run: |-
+            git config user.name "Automated"
+            git config user.email "actions@users.noreply.github.com"
+            git add -A
+            timestamp=$(date -u)
+            git commit -m "Latest data: ${timestamp}" || exit 0
+            git push
