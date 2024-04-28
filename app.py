@@ -94,8 +94,14 @@ def detail(uuid):
 @app.route("/site/<site_no>")
 def site(site_no):
     template = 'site.html'
+
     site_number = Violation.get(Violation.site_no == site_no)
-    return render_template(template, site_name = site_number.site_name)
+    return render_template(template,
+    site_name = site_number.site_name,
+    street_address = site_number.street_address,
+    county = site_number.county,
+    city_state_zip = site_number.city_state_zip
+    )
 
 
 def get_csv():
