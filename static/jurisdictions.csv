@@ -1,25 +1,25 @@
 id,county,slug
-1,Allegany County,allegany-county
-2,Anne Arundel County,anne-arundel-county
+1,Allegany,allegany-county
+2,Anne Arundel,anne-arundel-county
 3,Baltimore City,baltimore-city
-4,Baltimore County,baltimore-county
-5,Calvert County,calvert-county
-6,Caroline County,caroline-county
-7,Carroll County,carroll-county
-8,Cecil County,cecil-county
-9,Charles County,charles-county
-10,Dorchester County,dorchester-county
-11,Frederick County,frederick-county
-12,Garrett County,garrett-county
-13,Harford County,harford-county
-14,Howard County,howard-county
-15,Kent County,kent-county
-16,Montgomery County,montgomery-county
-17,Prince George's County,prince-georges-county
-18,Queen Anne's County,queen-annes-county
-19,Somerset County,somerset-county
-20,St. Mary's County,st-marys-county
-21,Talbot County,talbot-county
-22,Washington County,washington-county
-23,Wicomico County,wicomico-county
-24,Worcester County,worcester-county
+4,Baltimore,baltimore-county
+5,Calvert,calvert-county
+6,Caroline,caroline-county
+7,Carroll,carroll-county
+8,Cecil,cecil-county
+9,Charles,charles-county
+10,Dorchester,dorchester-county
+11,Frederick,frederick-county
+12,Garrett,garrett-county
+13,Harford,harford-county
+14,Howard,howard-county
+15,Kent,kent-county
+16,Montgomery,montgomery-county
+17,Prince George's,prince-georges-county
+18,Queen Anne's,queen-annes-county
+19,Somerset,somerset-county
+20,St. Mary's,st-marys-county
+21,Talbot,talbot-county
+22,Washington,washington-county
+23,Wicomico,wicomico-county
+24,Worcester,worcester-county

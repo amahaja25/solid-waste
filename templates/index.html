@@ -23,7 +23,7 @@
             <form action="{{ url_for('redirect_to_county') }}" method="post">
               <select name="slug">
                   {% for county in counties %}
-                  <option value="{{ county.slug }}">{{ county.lower().title() }}</option>
+                  <option value="{{ county.slug }}">{{ county.county.title() }}</option>
                   {% endfor %}
               </select>
               <button type="submit">Go</button>

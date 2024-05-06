@@ -7,27 +7,28 @@ app = Flask(__name__)
 db = SqliteDatabase('solid_waste.db')
 db.connect()
 
+class County(Model):
+    slug = TextField(null=True)
+    name = CharField()
+
+    class Meta:
+        table_name = "counties"
+        database = db
+
 class Violation(Model):
     site_no = CharField()
     site_name = CharField()
     street_address = CharField()
     city_state_zip = CharField()
-    county = CharField()
+    county = ForeignKeyField(County, backref='violations', field='name')  # Establishing foreign key relationship
     media = CharField()
     violation_date = DateField()
     status = CharField()
-    resolved_date = DateField()
+    resolved_date = DateField(null=True)  # Assuming resolved date can be null if unresolved
     uuid = CharField(primary_key=True, unique=True)
 
     class Meta:
         table_name = "violations"
-        database = db
-
-class County(Model):
-    slug = TextField(null=True)
-    county = CharField()
-    class Meta:
-        table_name = "counties"
         database = db
 
 
@@ -69,7 +70,7 @@ def index():
         (Violation.media == 'Surface Water Discharge Unauthorized') 
     ).count()
 
-    counties = [county.county for county in County.select(County.county).distinct().order_by(County.county)]
+    counties = County.select()
     print(counties)
 
     template = 'index.html'
@@ -160,13 +161,13 @@ def composting():
 def hazard():
     template = 'hazard.html'
 
-    hazardous_count = Violation.select().where(
+    violation_list = Violation.select().where(
         (Violation.media == 'SWP-Hazardous Waste') 
-    ).count()
+    )
 
-    violation_list = get_csv()
-    hazard_list = [violation for violation in violation_list if violation['media'] == 'SWP-Hazardous Waste']
-    return render_template(template, hazard_list=hazard_list, hazardous_count=hazardous_count)
+    hazardous_count = len(violation_list)
+
+    return render_template(template, hazard_list=violation_list, hazardous_count=hazardous_count, counties=counties)
 
 @app.route("/sewage-sludge")
 def sewage():
@@ -240,7 +241,10 @@ def redirect_to_county():
 @app.route("/county/<slug>")
 def county(slug):
     county = County.get(County.slug == slug)
-    return render_template('county.html', county=county)
+    county_total_count = Violation.select().where(
+        (Violation.county == county.county)).count()
+
+    return render_template('county.html', county=county, county_total_count=county_total_count)
 
 
 if __name__ == '__main__':

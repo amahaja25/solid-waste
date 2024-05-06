@@ -26,7 +26,7 @@
         {% for violation in hazard_list %}
         <tr>
           <td><a href="/site/{{ violation['site_no'] }}">{{ violation['site_name'] }}</a></td>
-          <td>{{ violation['county'] }}</td>
+          <td><a href="/county/{{ slug }}">{{ violation['county'] }}</td>
           <td>{{ violation['violation_date'] }}</td>
           <td>{{ violation['media'] }}</td>
         </tr>
