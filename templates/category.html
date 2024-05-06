@@ -11,11 +11,11 @@
       </nav>
       <div class="jumbotron">
         <div class="container">
-          <h1 class="display-4">Hazardous Waste</h1>
+          <h1 class="display-4">{{ category }}</h1>
           <br>
           <h3 class="display-6">This is a paragraph about what the hazardous waste violation is.</h3>
           <br>
-          <h4>There are currently {{ hazardous_count }} total hazardous waste violations.</h4>
+          <h4>There are currently {{ hazardous_count }} total {{ category }} violations.</h4>
         <table border=1 cellpadding=7>
           <tr>
             <th>Site Name</th>
@@ -23,7 +23,7 @@
             <th>Violation Date</th>
             <th>Violation Type</th>
         </tr>
-        {% for violation in hazard_list %}
+        {% for violation in violation_list %}
         <tr>
           <td><a href="{{ url_for('site', site_no=violation.site_no) }}">{{ violation.site_name }}</a></td>
           <td><a href="{{ url_for('county', slug=violation.county_obj.slug) }}">{{ violation.county }}</td>
