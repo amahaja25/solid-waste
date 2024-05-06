@@ -1,6 +1,6 @@
 import csv
 import datetime
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from peewee import *
 app = Flask(__name__)
 
@@ -22,6 +22,14 @@ class Violation(Model):
     class Meta:
         table_name = "violations"
         database = db
+
+class County(Model):
+    slug = TextField(null=True)
+    county = CharField()
+    class Meta:
+        table_name = "counties"
+        database = db
+
 
 
 @app.route("/")
@@ -61,6 +69,9 @@ def index():
         (Violation.media == 'Surface Water Discharge Unauthorized') 
     ).count()
 
+    counties = [county.county for county in County.select(County.county).distinct().order_by(County.county)]
+    print(counties)
+
     template = 'index.html'
     return render_template(template,
     refuse_count = refuse_count,
@@ -71,7 +82,8 @@ def index():
     sewage_count = sewage_count,
     balloon_count = balloon_count,
     surface_water_count = surface_water_count,
-    total_count = total_count
+    total_count = total_count,
+    counties=counties
     )
 
 
@@ -217,6 +229,18 @@ def surface_water():
     violation_list = get_csv()
     surface_water_list = [violation for violation in violation_list if violation['media'] == 'Surface Water Discharge Unauthorized']
     return render_template(template, surface_water_list=surface_water_list, surface_water_count=surface_water_count)
+
+@app.route("/redirect", methods=["POST"])
+def redirect_to_county():
+    slug = request.form.get('slug')
+    print("slug:", slug)
+    return redirect(url_for("county", slug=slug))
+
+# Route for displaying jurisdiction details
+@app.route("/county/<slug>")
+def county(slug):
+    county = County.get(County.slug == slug)
+    return render_template('county.html', county=county)
 
 
 if __name__ == '__main__':

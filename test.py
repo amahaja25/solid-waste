@@ -1,61 +1,62 @@
 from playwright.sync_api import sync_playwright
 import os
+import csv
 import shutil
 
 def main():
     url = "https://opendata.maryland.gov/stories/s/LMA-Solid-Waste-Program-Violation/rqzj-6qrm/"
     pdf_folder = "pdfs"
+    csv_filename = "pdf_links.csv"
     os.makedirs(pdf_folder, exist_ok=True)
+    
 
     with sync_playwright() as p:
         browser = p.chromium.launch()
         context = browser.new_context()
         page = context.new_page()
         page.goto(url)
-        # Wait for the page to load
         page.wait_for_load_state("networkidle")
 
-        # Extract relevant links from the iframe
         relevant_links = page.locator("a[href*='https://mdedataviewer.mde.state.md.us/OpenDataDocuments']")
         link_handles = relevant_links.element_handles()
 
-        for link in link_handles:
-            with context.expect_page() as new_page_info:
-                link.click()
-            new_page = new_page_info.value
-            new_page.wait_for_load_state("networkidle")
-            page_url = new_page.url
-            pdf_id = page_url.split('=')[-1]
+        with open(csv_filename, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['pdf_id', 'page_url'])
 
-            pdf_input = new_page.query_selector("input[type='image'][class='fdoc-pdf']")
-            if pdf_input:
-                # Get the file ID from the 'title' attribute of the PDF input element
-                file_id = pdf_input.get_attribute("title")
-                # Extract the PDF ID from the file ID
-                pdf_id = file_id.split("_")[0]
+            for link in link_handles:
+                with context.expect_page() as new_page_info:
+                    link.click()
+                new_page = new_page_info.value
+                new_page.wait_for_load_state("networkidle")
+                page_url = new_page.url
+                pdf_id = page_url.split('=')[-1]
+                href = link.get_attribute('href')
 
-                # Click on the PDF input element to initiate the download
-                with new_page.expect_download() as download_info:
-                    pdf_input.click()
+                pdf_input = new_page.query_selector("input[type='image'][class='fdoc-pdf']")
+                if pdf_input:
+                    file_id = pdf_input.get_attribute("title")
+                    pdf_id = file_id.split("_")[0]
 
-                # Get the downloaded file
-                download = download_info.value
+                    with new_page.expect_download() as download_info:
+                        pdf_input.click()
 
-                # Get the path of the downloaded file
-                downloaded_file_path = download.path()
+                    download = download_info.value
 
-                # Generate the desired filename for the PDF
-                pdf_filename = f"{pdf_folder}/{pdf_id}.pdf" 
+                    downloaded_file_path = download.path()
 
-                # Move the downloaded file to the desired location with the new filename
-                shutil.move(downloaded_file_path, pdf_filename)
+                    pdf_filename = f"{pdf_folder}/{pdf_id}.pdf" 
 
-                print(f"PDF downloaded: {pdf_filename}")
-            else:
-                print("PDF link not found on the page.")
+                    shutil.move(downloaded_file_path, pdf_filename)
 
-            new_page.close()
+                    print(f"PDF downloaded: {pdf_filename}")
+                else:
+                    print("PDF link not found on the page.")
 
+                writer.writerow([pdf_id, href])
+
+                new_page.close()
+        
         context.close()
         browser.close()
 
