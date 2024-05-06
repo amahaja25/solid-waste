@@ -36,12 +36,9 @@ filename = 'static/solid_waste_violations.csv'
 download_and_clean(url,filename)
 new_data = pd.read_csv(filename)
 
-existing_violations = read_existing_violations(filename)
 
-new_violations = [x for x in new_data['violation'] if x not in existing_violations]
-print(len(new_violations))
 
-if len(new_violations) > 0:
-    with open(filename, 'a', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerows(new_violations)
+
+with open(filename, 'a', newline='') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerows(new_data)
