@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>Trips</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="static/style.css">
   </head>
   <body>
@@ -11,12 +11,11 @@
       </nav>
       <div class="jumbotron">
         <div class="container">
-          <h1 class="display-4">Maryland Solid Waste Program Violations</h1><br>
-          <br>
-          <h2 class="display-5">blah blah blah this is what solid waste violations are. this is what the SWP is paragraph blah blah blah.</h2>
+          <h1 class="site-title display-4">Maryland Solid Waste Program Violations</h1><br>
+          <h2 class="display-5">The Maryland Department of the Environment is in charge of the Solid Waste Program, which ensures solid waste — otherwise known as garbage or trash — is handled properly. This includes household, commercial and non-hazardous industrial waste.
+          </h2>
           <br>
           <h2>There are currently {{ total_count }} total violations.</h2>
-          <br>
           <h2>Search by county: </h2>
           <div class="col-md-6">
             <br>
@@ -28,18 +27,16 @@
               </select>
               <button type="submit">Go</button>
           </form>
-          <br>
           </div>
           <h2 class="display-5">Violation Type:</h4>
-          <br>
-          <h3 class="display-8"><a href="/refuse-disposal">Refuse Disposal</a> - {{ refuse_count }}</h3>
-          <h3 class="display-8"><a href="/hazardous-waste">Hazardous Waste</a> - {{ hazardous_count }} </h3>
-          <h3 class="display-8"><a href="/composting">Composting</a> - {{ compost_count }} </h3>
-          <h3 class="display-8"><a href="/scrap-tire">Scrap Tire</a> - {{ tire_count }}</h3>
-          <h3 class="display-8"><a href="natural-wood-waste">Natural Wood Waste</a> - {{ wood_count }}</h3>
-          <h3 class="display-8"><a href="/sewage-sludge">Sewage Sludge</a> - {{ sewage_count }}</h3>
-          <h3 class="display-8"><a href="/balloon-release">Balloon Release</a> - {{ balloon_count}}</h3>
-          <h3 class="display-8"><a href="surface-water-discharge">Unauthorized Surface Water Discharge</a> - {{ surface_water_count }}</h3>
+          <h3 class="display-8"><a href="{{ url_for('category', category_slug='refuse-disposal')}}">Refuse Disposal</a> - {{ refuse_count }}</h3>
+          <h3 class="display-8"><a href="{{ url_for('category', category_slug='hazardous-waste')}}">Hazardous Waste</a> - {{ hazardous_count }} </h3>
+          <h3 class="display-8"><a href="{{ url_for('category', category_slug='composting')}}">Composting</a> - {{ compost_count }} </h3>
+          <h3 class="display-8"><a href="{{ url_for('category', category_slug='scrap-tire')}}">Scrap Tire</a> - {{ tire_count }}</h3>
+          <h3 class="display-8"><a href="{{ url_for('category', category_slug='wood-waste')}}">Natural Wood Waste</a> - {{ wood_count }}</h3>
+          <h3 class="display-8"><a href="{{ url_for('category', category_slug='sewage')}}">Sewage Sludge</a> - {{ sewage_count }}</h3>
+          <h3 class="display-8"><a href="{{ url_for('category', category_slug='balloon')}}">Balloon Release</a> - {{ balloon_count}}</h3>
+          <h3 class="display-8"><a href="{{ url_for('category', category_slug='surface-water')}}">Unauthorized Surface Water Discharge</a> - {{ surface_water_count }}</h3>
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@ table {
     margin: 0 0 20px 0;
     border-width: 0;
     width: 100%;
-    font-size: 14px;
+    font-size: 20px;
 }
 th {
     text-align:left;
@@ -14,4 +14,40 @@ tr, td, th {
 tr:hover {
     background-color: #f3f3f3;
 }
+
+body {
+    height: 100%;
+    position: relative;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    flex: 1 0 auto;
+    display: inline-block;
+    margin-left: 5em;
+    margin-right: 5em;
+    margin-top: 3em;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 100;
+  }
+
+.site-title {
+    color: #283618;
+    font-size: 3em;
+}
+
+/* body {
+    background-color: #fff9ea;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 100;
+    margin: 0 auto;
+    width: 100%;
+    display: inline-block;
+    padding-left: 5em;
+    padding-right: 5em;
+    padding-top: 2em;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+} */
 

@@ -10,6 +10,16 @@ db.connect()
 categories = {
     'hazardous-waste': 'SWP-Hazardous Waste',
     'refuse-disposal': 'SWP-Refuse Disposal',
+    'scrap-tire': 'SWP-Scrap Tire',
+    'wood-waste': 'SWP-Natural Wood Waste',
+    'composting': 'SWP-Composting',
+    'sewage': 'SWP-Sewage Sludge',
+    'balloon': 'SWP-Balloon Release',
+    'surface-water': 'Surface Water Discharge Unauthorized'
+}
+
+categories_description = {
+    
 }
 
 class County(Model):
@@ -27,9 +37,9 @@ class Violation(Model):
     city_state_zip = CharField()
     county = CharField()
     media = CharField()
-    violation_date = DateField()
+    violation_date = DateTimeField()
     status = CharField()
-    resolved_date = DateField(null=True)  # Assuming resolved date can be null if unresolved
+    resolved_date = DateField(null=True)  
     uuid = CharField(primary_key=True, unique=True)
 
     @property
@@ -116,8 +126,14 @@ def detail(uuid):
 @app.route("/site/<site_no>")
 def site(site_no):
     template = 'site.html'
+    
+
 
     site_number = Violation.get(Violation.site_no == site_no)
+
+    site_violation_count = Violation.select().where(
+        (Violation.site_no == site_no)).count()
+
     return render_template(template,
     site_name = site_number.site_name,
     street_address = site_number.street_address,
@@ -134,7 +150,7 @@ def category(category_slug):
     
     violation_list = Violation.select().where(
         (Violation.media == category) 
-    ).join(County, on=(Violation.county == County.county))
+    ).join(County, on=(Violation.county == County.county)).order_by(Violation.violation_date.desc())
 
     hazardous_count = violation_list.count()
 
