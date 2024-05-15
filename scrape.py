@@ -19,6 +19,16 @@ def download_and_clean(url, filename):
     df = pd.read_csv(filename)
     df = clean_column_names(df)
 
+    df['city_state_zip'] = df['city_state_zip'].str.replace(r',(\S)', r', \1', regex=True)
+
+    if 'violation_date' in df.columns:
+        df['violation_date'] = pd.to_datetime(df['violation_date'], errors='coerce').dt.strftime('%Y/%m/%d')
+
+    if 'resolved_date' in df.columns:
+        df['resolved_date'] = pd.to_datetime(df['resolved_date'], dayfirst=True, errors='coerce').dt.strftime('%Y/%m/%d')
+
+
+
     df['uuid'] = [str(uuid.uuid4()) for _ in range(len(df))]
 
     df.to_csv(filename, index=False)
@@ -33,9 +43,9 @@ def read_existing_violations(filename):
 url = 'https://opendata.maryland.gov/api/views/tzjz-wfys/rows.csv?accessType=DOWNLOAD'
 filename = 'static/solid_waste_violations.csv'
 
+
 download_and_clean(url,filename)
 new_data = pd.read_csv(filename)
-
 
 
 

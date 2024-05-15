@@ -3,7 +3,7 @@
   <head>
     <title>Trips</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   </head>
   <body>
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -11,9 +11,9 @@
       </nav>
       <div class="jumbotron">
         <div class="container">
-          <h1 class="display-4">{{ site_name }}, located in {{ county }}, recieved a solid waste violation on {{ date_start }}.</h1>
-          <br>
-          <h1 class="display-4">This was a {{ violation_type }} violation.</h1>
+          <h1>Violation Details</h1>
+          <h2 class="display-4"><a href="{{ url_for('site', site_no=violation.site_no) }}">{{ site_name }}</a>, located in {{ county }}, recieved a {{ violation_type }} violation on {{ date_start }}.</h1>
+          <h2>This site has recieved {{ other_violation_count }} other violations.</h2>
           <br>
           <br>
         </div>

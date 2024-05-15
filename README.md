@@ -1,6 +1,10 @@
 [![Open in Codespaces](https://classroom.github.com/assets/launch-codespace-7f7980b617ed060a017424585567c406b6ee15c891e84e1186181d67ecf80aa0.svg)](https://classroom.github.com/open-in-codespaces?assignment_repo_id=14703123)
 # final-project
 
+To use:
+
+pip install flask peewee
+
 <strong>4/13</strong> --
 For my final project, I want to make a news app that displays data about solid waste violations in Maryland based on data from Maryland's Open Data Portal. Maryland's website should be updated each day, so that means my news app should keep up with the most recent violations and be updated everyday. One record would be one of the violations, which is one row in the csv. The updates would be done incrementally as the data source gets updates over time.
 

@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>Trips</title>
-    <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   </head>
   <body>
@@ -12,23 +12,28 @@
       <div class="jumbotron">
         <div class="container">
           <h1 class="display-4">{{ category }}</h1>
-          <br>
-          <h3 class="display-6">This is a paragraph about what the hazardous waste violation is.</h3>
-          <br>
+          <h2>{{ description|safe }}</h2>
           <h4>There are currently {{ hazardous_count }} total {{ category }} violations.</h4>
         <table border=1 cellpadding=7>
           <tr>
+            <th>Details</th>
             <th>Site Name</th>
             <th>County</th>
             <th>Violation Date</th>
+            <th>Resolved Date</th>
             <th>Violation Type</th>
+            <th>Status</th>
+            
         </tr>
         {% for violation in violation_list %}
         <tr>
+          <td><a href="{{ url_for('detail', uuid=violation.uuid) }}">View</a></td>
           <td><a href="{{ url_for('site', site_no=violation.site_no) }}">{{ violation.site_name }}</a></td>
           <td><a href="{{ url_for('county', slug=violation.county_obj.slug) }}">{{ violation.county }}</td>
-          <td>{{ violation.violation_date }}</td>
+          <td>{{ violation.violation_date if violation.violation_date not in ['', 'None'] else 'None' }}</td>
+          <td>{{ violation.resolved_date if violation.resolved_date not in ['', 'None'] else 'None' }}</td>
           <td>{{ violation.media }}</td>
+          <td>{{ violation.status }}</td>
         </tr>
         {% endfor %}
       </table>

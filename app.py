@@ -8,18 +8,25 @@ db = SqliteDatabase('solid_waste.db')
 db.connect()
 
 categories = {
-    'hazardous-waste': 'SWP-Hazardous Waste',
-    'refuse-disposal': 'SWP-Refuse Disposal',
-    'scrap-tire': 'SWP-Scrap Tire',
-    'wood-waste': 'SWP-Natural Wood Waste',
-    'composting': 'SWP-Composting',
-    'sewage': 'SWP-Sewage Sludge',
-    'balloon': 'SWP-Balloon Release',
-    'surface-water': 'Surface Water Discharge Unauthorized'
-}
+    'hazardous-waste': ('SWP-Hazardous Waste', 'Hazardous Waste'),
+    'refuse-disposal': ('SWP-Refuse Disposal', 'Refuse Disposal'),
+    'scrap-tire': ('SWP-Scrap Tire', 'Scrap Tire'),
+    'wood-waste': ('SWP-Natural Wood Waste', 'Natural Wood Waste'),
+    'composting': ('SWP-Composting', 'Composting'),
+    'sewage': ('SWP-Sewage Sludge', 'Sewage Sludge'),
+    'balloon': ('SWP-Balloon Release', 'Balloon Release'),
+    'surface-water': ('Surface Water Discharge Unauthorized', 'Unauthorized Surface Water Discharge')
+    }
 
 categories_description = {
-    
+    'balloon': 'According to a Maryland law passed in the 2021 legislative session, people may not intentionally release a balloon into the atmosphere or participate in mass balloon releases, which consist of 10 or more balloons being released into the atmosphere. <br><br> Exceptions include unintentionally released balloons and balloons released for meteorological or official scientific research purposes.',
+    'wood-waste': 'According to the MDE, natural wood waste generally occurs when land is cleared for construction. This type of waste consists of discarded vegetation “in its natural state.” <br><br> Natural wood waste has to be disposed of in specific Natural Wood Waste Recycling Facilities, which process tree stumps, logs and limbs. The facilities make mulch and compost out of the wood waste and distribute or sell it afterwards, according to the MDE.',
+    'hazardous-waste': 'Hazardous waste is any substance that threatens to harm human health or the environment or has the potential to “cause or contribute to an increase in mortality or serious illness,” according to the MDE. <br><br> This form of waste must be shipped to a specific hazardous waste facility that accepts it, but if a person has the appropriate permit, they may treat it themself. MDE inspectors routinely inspect hazardous waste generators and facilities unannounced. Household waste is not regulated as hazardous waste.',
+    'composting': 'g',
+    'scrap-tire': 'Illegal stockpiles of scrap tires, which are tires that are no longer suitable for their original purpose, can lead to fire hazards, become breeding grounds for mosquitoes or disease-carrying agents and are “unsightly,” according to MDE’s website. <br><br>According to the Maryland Code of the Environment, people may only dispose of scrap tires through approved facilities or licensed scrap tire haulers.',
+    'sewage': 'Sewage sludge — also known as biosolids — is the semi-solid residue that is produced when sewage or wastewater is treated and decontaminated. <br><br> According to Maryland law, people are not allowed to transport, compost, dispose or use sewage sludge unless they have a Sewage Sludge Utilization Permit from MDE.',
+    'refuse-disposal': 'f',
+    'surface-water': 'Industrial facilities that release wastewater or stormwater into Maryland surface waters such as  lakes, creeks, streams, rivers, reservoirs and the ocean, are required to have permits from the MDE to do so. The permit makes sure that the discharge meets Maryland water quality standards.'
 }
 
 class County(Model):
@@ -39,7 +46,7 @@ class Violation(Model):
     media = CharField()
     violation_date = DateTimeField()
     status = CharField()
-    resolved_date = DateField(null=True)  
+    resolved_date = DateTimeField()  
     uuid = CharField(primary_key=True, unique=True)
 
     @property
@@ -56,97 +63,124 @@ class Violation(Model):
 def index():
 
     total_count = Violation.select().count()
-    
-    refuse_count = Violation.select().where(
-        (Violation.media == 'SWP-Refuse Disposal') 
-    ).count()
-
-    hazardous_count = Violation.select().where(
-        (Violation.media == 'SWP-Hazardous Waste') 
-    ).count()
-
-    tire_count = Violation.select().where(
-        (Violation.media == 'SWP-Scrap Tire') 
-    ).count()
-
-    wood_count = Violation.select().where(
-        (Violation.media == 'SWP-Natural Wood Waste') 
-    ).count()
-
-    compost_count = Violation.select().where(
-        (Violation.media == 'SWP-Composting') 
-    ).count()
-
-    sewage_count = Violation.select().where(
-        (Violation.media == 'SWP-Sewage Sludge') 
-    ).count()
-
-    balloon_count = Violation.select().where(
-        (Violation.media == 'SWP-Balloon Release') 
-    ).count()
-
-    surface_water_count = Violation.select().where(
-        (Violation.media == 'Surface Water Discharge Unauthorized') 
-    ).count()
 
     counties = County.select()
-    print(counties)
+
+    most_violations = (Violation.select(Violation.county, fn.COUNT(Violation.county).alias('count')).group_by(Violation.county).order_by(fn.COUNT(Violation.county).desc())
+                       .limit(1))
+    most_violations_county = most_violations.get()
+    most_violations_info = {
+        'county': most_violations_county.county,
+        'count': most_violations_county.count
+        }
+
+    most_common_violation = (Violation
+                             .select(Violation.media, fn.COUNT(Violation.media).alias('count'))
+                             .group_by(Violation.media)
+                             .order_by(fn.COUNT(Violation.media).desc())
+                             .limit(1))
+    
+    most_common = most_common_violation.get()
+    violation_name = categories[most_common.media][1] if most_common.media in categories else most_common.media
+
+    most_common_info = {
+        'type': violation_name,
+        'count': most_common.count
+    }
 
     template = 'index.html'
     return render_template(template,
-    refuse_count = refuse_count,
-    hazardous_count = hazardous_count,
-    tire_count = tire_count,
-    wood_count = wood_count,
-    compost_count = compost_count,
-    sewage_count = sewage_count,
-    balloon_count = balloon_count,
-    surface_water_count = surface_water_count,
     total_count = total_count,
-    counties=counties
+    counties=counties,
+    categories=categories,
+    most_violations=most_violations_info,
+    most_common=most_common_info,
+    violation_name=violation_name
     )
 
+
+from datetime import datetime
 
 @app.route("/violation/<uuid>")
 def detail(uuid):
     template = 'detail.html'
     violation = Violation.get(Violation.uuid == uuid)
+
+    if violation.violation_date:
+        date_start = datetime.strptime(violation.violation_date, "%Y/%m/%d").strftime('%B %d, %Y')
+    else:
+        date_start = 'Unknown'
+
+    if hasattr(violation, 'resolved_date') and violation.resolved_date:
+        date_resolved = datetime.strptime(violation.resolved_date, "%Y/%m/%d").strftime('%B %d, %Y')
+    else:
+        date_resolved = 'Not resolved'
     
-    violation_date = datetime.datetime.strptime(violation.violation_date, '%m/%d/%Y')
-    date_start = violation_date.strftime('%B %d, %Y')
+    other_violation_count = Violation.select().where(Violation.site_no == violation.site_no).count() - 1
+
+    
 
     return render_template('detail.html', 
-    street_address = violation.street_address, 
-    county = violation.county, 
-    site_name = violation.site_name,
-    type = violation.media,
-    date_start = date_start,
-    violation_type = violation.media)
+                           street_address=violation.street_address, 
+                           county=violation.county, 
+                           site_name=violation.site_name,
+                           date_start=date_start,
+                           date_resolved=date_resolved,
+                           violation_type=violation.media,
+                           violation=violation,
+                           other_violation_count=other_violation_count)  
 
 @app.route("/site/<site_no>")
 def site(site_no):
     template = 'site.html'
     
 
-
     site_number = Violation.get(Violation.site_no == site_no)
 
-    site_violation_count = Violation.select().where(
-        (Violation.site_no == site_no)).count()
+    violation_list = Violation.select().where(
+        Violation.site_no == site_no
+    ).order_by(Violation.violation_date.desc())
+
+    site_violation_count = violation_list.count()
 
     return render_template(template,
     site_name = site_number.site_name,
     street_address = site_number.street_address,
     county = site_number.county,
-    city_state_zip = site_number.city_state_zip
+    city_state_zip = site_number.city_state_zip,
+    violation_list = violation_list,
+    site_violation_count = site_violation_count
     )
 
+@app.route("/redirect-to-county", methods=["POST"])
+def redirect_to_county():
+    slug = request.form.get('slug')
+    print("slug:", slug)
+    return redirect(url_for("county", slug=slug))
+
+@app.route("/county/<slug>")
+def county(slug):
+    county = County.get(County.slug == slug)
+    county_total_count = Violation.select().where(
+        (Violation.county == county.county)).count()
+
+    violation_list = Violation.select().where(
+        Violation.county == county.county
+    ).order_by(Violation.violation_date.desc())
+
+
+    return render_template('county.html', county=county, county_total_count=county_total_count, violation_list = violation_list)
+
+@app.route("/redirect-to-category", methods=["POST"])
+def redirect_to_category():
+    category_slug = request.form.get('category_slug')
+    return redirect(url_for("category", category_slug=category_slug))
 
 @app.route("/category/<category_slug>")
 def category(category_slug):
     template = 'category.html'
+    category = categories[category_slug][0]
 
-    category = categories[category_slug]
     
     violation_list = Violation.select().where(
         (Violation.media == category) 
@@ -154,22 +188,9 @@ def category(category_slug):
 
     hazardous_count = violation_list.count()
 
-    return render_template(template, violation_list=violation_list, hazardous_count=hazardous_count, category=category)
+    description = categories_description.get(category_slug)
 
-@app.route("/redirect", methods=["POST"])
-def redirect_to_county():
-    slug = request.form.get('slug')
-    print("slug:", slug)
-    return redirect(url_for("county", slug=slug))
-
-# Route for displaying jurisdiction details
-@app.route("/county/<slug>")
-def county(slug):
-    county = County.get(County.slug == slug)
-    county_total_count = Violation.select().where(
-        (Violation.county == county.county)).count()
-
-    return render_template('county.html', county=county, county_total_count=county_total_count)
+    return render_template(template, violation_list=violation_list, hazardous_count=hazardous_count, category=category, description=description)
 
 
 if __name__ == '__main__':
