@@ -7,13 +7,13 @@
   </head>
   <body>
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="/">Violation</a>
+        <a class="navbar-brand" href="/">Solid Waste Violations</a>
       </nav>
       <div class="jumbotron">
         <div class="container">
           <h1 class="display-4">{{ category }}</h1>
           <h2>{{ description|safe }}</h2>
-          <h4>There are currently {{ hazardous_count }} total {{ category }} violations.</h4>
+          <h3>There are currently {{ hazardous_count }} total {{ category }} violations.</h4>
         <table border=1 cellpadding=7>
           <tr>
             <th>Details</th>
@@ -27,7 +27,7 @@
         </tr>
         {% for violation in violation_list %}
         <tr>
-          <td><a href="{{ url_for('detail', uuid=violation.uuid) }}">View</a></td>
+          <td><a href="{{ url_for('detail', id=violation.id) }}">View</a></td>
           <td><a href="{{ url_for('site', site_no=violation.site_no) }}">{{ violation.site_name }}</a></td>
           <td><a href="{{ url_for('county', slug=violation.county_obj.slug) }}">{{ violation.county }}</td>
           <td>{{ violation.violation_date if violation.violation_date not in ['', 'None'] else 'None' }}</td>

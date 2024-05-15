@@ -47,7 +47,7 @@ class Violation(Model):
     violation_date = DateTimeField()
     status = CharField()
     resolved_date = DateTimeField()  
-    uuid = CharField(primary_key=True, unique=True)
+    id = CharField(primary_key=True, unique=True)
 
     @property
     def county_obj(self):
@@ -101,10 +101,10 @@ def index():
 
 from datetime import datetime
 
-@app.route("/violation/<uuid>")
-def detail(uuid):
+@app.route("/violation/<id>")
+def detail(id):
     template = 'detail.html'
-    violation = Violation.get(Violation.uuid == uuid)
+    violation = Violation.get(Violation.id == id)
 
     if violation.violation_date:
         date_start = datetime.strptime(violation.violation_date, "%Y/%m/%d").strftime('%B %d, %Y')
@@ -161,8 +161,7 @@ def redirect_to_county():
 @app.route("/county/<slug>")
 def county(slug):
     county = County.get(County.slug == slug)
-    county_total_count = Violation.select().where(
-        (Violation.county == county.county)).count()
+    county_total_count = Violation.select().where(Violation.county == county.county).count()
 
     violation_list = Violation.select().where(
         Violation.county == county.county
