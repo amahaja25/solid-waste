@@ -2,20 +2,26 @@
 <html>
   <head>
     <title>Trips</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link href="https://cdn.datatables.net/v/dt/dt-2.0.7/r-3.0.2/datatables.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.datatables.net/v/dt/dt-2.0.7/r-3.0.2/datatables.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
   </head>
   <body>
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="/">Solid Waste Violations</a>
-      </nav>
+      
       <div class="jumbotron">
         <div class="container">
+          <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="/">Solid Waste Violations</a>
+          </nav>
           <h1 class="display-4"> {{ county.county }} has recieved <div class="total">{{ county_total_count }}</div> violations.</h1>
           <h2>The site with the most violations is {{ most_violations_info.site_name }} with <div class="total">{{ most_violations_info.count }}</div>.</h2>
           <h1 class="display-4"></h1>
           <br>
-          <table border=1 cellpadding=7>
+          <table id="violations" class="display">
+          <thead>
             <tr>
               <th>Details</th>
               <th>Site Name</th>
@@ -24,8 +30,9 @@
               <th>Resolved Date</th>
               <th>Violation Type</th>
               <th>Status</th>
-
           </tr>
+        </thead>
+        <tbody>
           {% for violation in violation_list %}
           <tr>
             <td><a href="{{ url_for('detail', id=violation.id) }}">View</a></td>
@@ -37,32 +44,12 @@
             <td>{{ violation.status }}</td>
           </tr>
           {% endfor %}
+        </tbody>
         </table>
-        <nav>
-          <ul class="pagination">
-              <li class="page-item {{ 'disabled' if current_page <= 1 else '' }}">
-                  <a class="page-link" href="?page={{ current_page - 1 }}">Previous</a>
-              </li>
-      
-              <!-- Calculate start and end page numbers -->
-              {% set start_page = current_page - 2 if current_page - 2 > 0 else 1 %}
-              {% set end_page = start_page + 4 if start_page + 4 <= total_pages else total_pages %}
-              {% if end_page - start_page < 4 and start_page != 1 %}
-                  {% set start_page = end_page - 4 if end_page - 4 > 0 else 1 %}
-              {% endif %}
-      
-              <!-- Generate page number links -->
-              {% for i in range(start_page, end_page + 1) %}
-              <li class="page-item {% if i == current_page %}active{% endif %}">
-                  <a class="page-link" href="?page={{ i }}">{{ i }}</a>
-              </li>
-              {% endfor %}
-      
-              <li class="page-item {{ 'disabled' if current_page >= total_pages else '' }}">
-                  <a class="page-link" href="?page={{ current_page + 1 }}">Next</a>
-              </li>
-          </ul>
-      </nav>
+        <script type="text/javascript">
+          let table = new DataTable('#violations', {
+          responsive: true, paging: false, scrollY: 400});
+      </script>
         </div>
       </div>
     </div>

@@ -1,5 +1,4 @@
-name: Scrape
-
+name: Scrape and set up
 
 on:
   push:
@@ -26,6 +25,30 @@ jobs:
 
       - name: run scraper
         run: python scrape.py
+
+      - name: "Commit and push if it changed"
+        run: |-
+            git config user.name "Automated"
+            git config user.email "actions@users.noreply.github.com"
+            git add -A
+            timestamp=$(date -u)
+            git commit -m "Latest data: ${timestamp}" || exit 0
+            git push
+  db_set_up_sh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10.13'
+
+      - name: Install dependencies
+        run: pip install requests pandas 
+
+      - name: run sh
+        run: sh violations_setup.sh
 
       - name: "Commit and push if it changed"
         run: |-

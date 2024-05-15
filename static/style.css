@@ -1,36 +1,28 @@
 table {
-    border-collapse:collapse;
-    margin: 0 0 20px 0;
-    border-width: 0;
-    width: 100%;
-    font-size: 20px;
+    font-size: 15px;
     font-family: 'DM Sans', sans-serif;
     font-weight: 200;
+    table-layout: fixed;
+    margin: auto;
 }
-th {
-    text-align:left;
+
+.container {
+    width: 90%;
+    margin: auto;
+    overflow-x: auto;
 }
 tr, td, th {
     border-color: #f2f2f2;
+    box-sizing: border-box;
 }
 tr:hover {
     background-color: #e1e1e4b4;
 }
 
 body {
-    height: 100%;
-    position: relative;
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    margin: 0 auto;
-    flex: 1 0 auto;
-    display: inline-block;
-    margin-left: 7em;
-    margin-right: 7em;
-    margin-top: 3em;
+    padding: 0;
     font-family: 'Raleway', sans-serif;
-    font-weight: 100;
     background-color: #F6F6F6;
   }
 
@@ -121,34 +113,4 @@ select {
     background-color: #fb8500;
 }
 
-.pagination {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    padding: 0;
-}
 
-.page-item {
-    margin: 0 5px; /* Space between buttons */
-}
-
-.page-link {
-    display: block;
-    padding: 8px 16px;
-    background-color: #0B3F38;;
-    color: white; /* Blue color similar to the screenshot */
-    border: 1px solid #ddd;
-    text-decoration: none; /* Removes underline from links */
-}
-
-.page-link:hover,
-.page-item.active .page-link {
-    background-color: #fb8500;
-    color: white;
-}
-
-.page-item.disabled .page-link {
-    color: #ccc; /* Light grey for disabled links */
-    cursor: not-allowed;
-    pointer-events: none; /* Prevents clicking on the link */
-}

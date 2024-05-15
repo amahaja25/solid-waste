@@ -135,23 +135,15 @@ def site(site_no):
 
     site_number = Violation.get(Violation.site_no == site_no)
 
-
-    page = request.args.get('page', 1, type=int)  
-    page_size = 20 
-
     total_violations = (Violation
                         .select()
                         .where(Violation.site_no == site_no)  
                         .count())
     
-    total_pages = (total_violations + page_size - 1) // page_size
-
-    start_page = max(page - 2, 1)
-    end_page = min(page + 2, total_pages)
 
     violation_list = Violation.select().where(
         Violation.site_no == site_no
-    ).order_by(Violation.violation_date.desc()).paginate(page, page_size)
+    ).order_by(Violation.violation_date.desc())
 
     site_violation_count = violation_list.count()
 
@@ -162,7 +154,6 @@ def site(site_no):
     city_state_zip = site_number.city_state_zip,
     violation_list = violation_list,
     site_violation_count = site_violation_count,
-    total_pages=total_pages, current_page=page,start_page=start_page, end_page=end_page
     )
 
 @app.route("/redirect-to-county", methods=["POST"])
@@ -223,34 +214,37 @@ def redirect_to_category():
 @app.route("/category/<category_slug>")
 def category(category_slug):
     template = 'category.html'
-    category = categories[category_slug][0]
 
-    page = request.args.get('page', 1, type=int)  
-    page_size = 20 
+    category = categories[category_slug][0]
+    description = categories_description.get(category_slug)
+
+
 
     total_violations = (Violation
                         .select()
-                        .where(Violation.media == category)  
-                        .join(County, on=(Violation.county == County.county)) 
+                        .where(Violation.media == category)
+                        .join(County, on=(Violation.county == County.county))
                         .count())
-    
-    total_pages = (total_violations + page_size - 1) // page_size
-
-    start_page = max(page - 2, 1)
-    end_page = min(page + 2, total_pages)
 
     
-    violation_list = Violation.select().where(
-        (Violation.media == category) 
-    ).join(County, on=(Violation.county == County.county)).order_by(Violation.violation_date.desc()).paginate(page, page_size)
+
+
+
+    violation_list = (Violation
+                      .select()
+                      .where(Violation.media == category)
+                      .join(County, on=(Violation.county == County.county))
+ )
+
+    
 
     hazardous_count = violation_list.count()
 
-    description = categories_description.get(category_slug)
     
 
     return render_template('category.html', violation_list=violation_list, hazardous_count=hazardous_count,
-                           total_pages=total_pages, current_page=page, category=category, description=description, start_page=start_page, end_page=end_page)
+                           description=description, category=category)
+
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=True)
