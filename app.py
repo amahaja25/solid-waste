@@ -1,4 +1,3 @@
-import csv
 import datetime
 from flask import Flask, render_template, request, redirect, url_for
 from peewee import *
@@ -133,13 +132,26 @@ def detail(id):
 @app.route("/site/<site_no>")
 def site(site_no):
     template = 'site.html'
-    
 
     site_number = Violation.get(Violation.site_no == site_no)
 
+
+    page = request.args.get('page', 1, type=int)  
+    page_size = 20 
+
+    total_violations = (Violation
+                        .select()
+                        .where(Violation.site_no == site_no)  
+                        .count())
+    
+    total_pages = (total_violations + page_size - 1) // page_size
+
+    start_page = max(page - 2, 1)
+    end_page = min(page + 2, total_pages)
+
     violation_list = Violation.select().where(
         Violation.site_no == site_no
-    ).order_by(Violation.violation_date.desc())
+    ).order_by(Violation.violation_date.desc()).paginate(page, page_size)
 
     site_violation_count = violation_list.count()
 
@@ -149,7 +161,8 @@ def site(site_no):
     county = site_number.county,
     city_state_zip = site_number.city_state_zip,
     violation_list = violation_list,
-    site_violation_count = site_violation_count
+    site_violation_count = site_violation_count,
+    total_pages=total_pages, current_page=page,start_page=start_page, end_page=end_page
     )
 
 @app.route("/redirect-to-county", methods=["POST"])
@@ -163,12 +176,44 @@ def county(slug):
     county = County.get(County.slug == slug)
     county_total_count = Violation.select().where(Violation.county == county.county).count()
 
+
+    page = request.args.get('page', 1, type=int)  
+    page_size = 20 
+
+    total_violations = (Violation
+                        .select()
+                        .where(Violation.county == county.county)   
+                        .count())
+    
+    total_pages = (total_violations + page_size - 1) // page_size
+    
+
+    start_page = max(page - 2, 1)
+    end_page = min(page + 2, total_pages)
+
     violation_list = Violation.select().where(
         Violation.county == county.county
-    ).order_by(Violation.violation_date.desc())
+    ).order_by(Violation.violation_date.desc()).paginate(page, page_size)
 
 
-    return render_template('county.html', county=county, county_total_count=county_total_count, violation_list = violation_list)
+    most_violations_site = (
+        Violation
+        .select(Violation.site_no, Violation.site_name, fn.COUNT(Violation.site_no).alias('count'))
+        .where(Violation.county == county.county)
+        .group_by(Violation.site_no, Violation.site_name)
+        .order_by(fn.COUNT(Violation.site_no).desc())
+        .limit(1)
+        .get()
+    )
+    
+    most_violations_info = {
+        'site_no': most_violations_site.site_no,
+        'site_name': most_violations_site.site_name,
+        'count': most_violations_site.count
+    }
+
+
+    return render_template('county.html', county=county, county_total_count=county_total_count, violation_list = violation_list,most_violations_info=most_violations_info,total_pages=total_pages, current_page=page,start_page=start_page, end_page=end_page)
 
 @app.route("/redirect-to-category", methods=["POST"])
 def redirect_to_category():
@@ -180,17 +225,32 @@ def category(category_slug):
     template = 'category.html'
     category = categories[category_slug][0]
 
+    page = request.args.get('page', 1, type=int)  
+    page_size = 20 
+
+    total_violations = (Violation
+                        .select()
+                        .where(Violation.media == category)  
+                        .join(County, on=(Violation.county == County.county)) 
+                        .count())
+    
+    total_pages = (total_violations + page_size - 1) // page_size
+
+    start_page = max(page - 2, 1)
+    end_page = min(page + 2, total_pages)
+
     
     violation_list = Violation.select().where(
         (Violation.media == category) 
-    ).join(County, on=(Violation.county == County.county)).order_by(Violation.violation_date.desc())
+    ).join(County, on=(Violation.county == County.county)).order_by(Violation.violation_date.desc()).paginate(page, page_size)
 
     hazardous_count = violation_list.count()
 
     description = categories_description.get(category_slug)
+    
 
-    return render_template(template, violation_list=violation_list, hazardous_count=hazardous_count, category=category, description=description)
-
+    return render_template('category.html', violation_list=violation_list, hazardous_count=hazardous_count,
+                           total_pages=total_pages, current_page=page, category=category, description=description, start_page=start_page, end_page=end_page)
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=True)

@@ -23,7 +23,6 @@
             <th>Resolved Date</th>
             <th>Violation Type</th>
             <th>Status</th>
-            
         </tr>
         {% for violation in violation_list %}
         <tr>
@@ -37,6 +36,32 @@
         </tr>
         {% endfor %}
       </table>
+      <nav>
+        <ul class="pagination">
+            <li class="page-item {{ 'disabled' if current_page <= 1 else '' }}">
+                <a class="page-link" href="?page={{ current_page - 1 }}">Previous</a>
+            </li>
+    
+            <!-- Calculate start and end page numbers -->
+            {% set start_page = current_page - 2 if current_page - 2 > 0 else 1 %}
+            {% set end_page = start_page + 4 if start_page + 4 <= total_pages else total_pages %}
+            {% if end_page - start_page < 4 and start_page != 1 %}
+                {% set start_page = end_page - 4 if end_page - 4 > 0 else 1 %}
+            {% endif %}
+    
+            <!-- Generate page number links -->
+            {% for i in range(start_page, end_page + 1) %}
+            <li class="page-item {% if i == current_page %}active{% endif %}">
+                <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+            </li>
+            {% endfor %}
+    
+            <li class="page-item {{ 'disabled' if current_page >= total_pages else '' }}">
+                <a class="page-link" href="?page={{ current_page + 1 }}">Next</a>
+            </li>
+        </ul>
+    </nav>
+
           <br>
           <br>
           <br>

@@ -13,7 +13,7 @@
         <div class="container">
           <h1>{{ site_name }}</h1>
           <h2>This site is located at {{ street_address }}, {{ city_state_zip }} in {{ county }} County.</h2>
-          <h2>{{ site_name }} has recieved {{ site_violation_count }} violations.</h2>
+          <h2>{{ site_name }} has recieved <div class="total">{{ site_violation_count }}</div> violations.</h2>
           <table border=1 cellpadding=7>
             <tr>
               <th>Details</th>
@@ -38,6 +38,31 @@
           </tr>
           {% endfor %}
         </table>
+        <nav>
+          <ul class="pagination">
+              <li class="page-item {{ 'disabled' if current_page <= 1 else '' }}">
+                  <a class="page-link" href="?page={{ current_page - 1 }}">Previous</a>
+              </li>
+      
+              <!-- Calculate start and end page numbers -->
+              {% set start_page = current_page - 2 if current_page - 2 > 0 else 1 %}
+              {% set end_page = start_page + 4 if start_page + 4 <= total_pages else total_pages %}
+              {% if end_page - start_page < 4 and start_page != 1 %}
+                  {% set start_page = end_page - 4 if end_page - 4 > 0 else 1 %}
+              {% endif %}
+      
+              <!-- Generate page number links -->
+              {% for i in range(start_page, end_page + 1) %}
+              <li class="page-item {% if i == current_page %}active{% endif %}">
+                  <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+              </li>
+              {% endfor %}
+      
+              <li class="page-item {{ 'disabled' if current_page >= total_pages else '' }}">
+                  <a class="page-link" href="?page={{ current_page + 1 }}">Next</a>
+              </li>
+          </ul>
+      </nav>
         </div>
       </div>
     </div>

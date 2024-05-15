@@ -12,29 +12,29 @@
       <div class="jumbotron">
         <div class="container">
           <h1 class="site-title">Maryland Solid Waste Program Violations 🚮</h1>
-          <h2>The Maryland Department of the Environment's Land and Materials Administration is in charge of the <b>Solid Waste Program (SWP)</b>, which ensures solid waste — otherwise known as garbage or trash — is handled properly. This includes household, commercial and industrial waste.
+          <h2>The Maryland Department of the Environment's Land and Materials Administration is in charge of the <b>Solid Waste Program (SWP)</b>, which ensures solid waste — otherwise known as garbage or refuse — is handled properly. This includes household, commercial and industrial waste.
           </h2>
           <h2>There are currently <div class="total">{{ total_count }}</div> total violations. {{ most_violations.county }} has the most with <div class="total">{{ most_violations.count }}</div>.</h2>
-          <h2>The most common violation is {{ most_common.type }}.</h2>
-          <h3>Use the dropdowns to view violations by county or to learn about what each violation type means. From there, you can learn more about individual violations and sites.
+          <h2>The most common violation is <b>{{ most_common.type }}</b>.</h2>
+          <h3>Use the dropdowns to view violations by county or to learn what each violation type means. From there, you can learn more about individual violations and sites.
           </h3>
 
           <div class="form-container">
             <div class="form-group">
-                <label for="county-select" class="label">Search by County:</label>
+                <label for="county-select" class="label">Filter by County:</label>
                 <br>
                 <form action="{{ url_for('redirect_to_county') }}" method="post">
                     <select name="slug" id="county-select">
                         {% for county in counties %}
-                        <option value="{{ county.slug }}">{{ county.county.title() }}</option>
+                        <option value="{{ county.slug }}">{{ county.county }}</option>
                         {% endfor %}
                     </select>
-                    <button type="submit">Go</button>
+                    <button type="submit" class="btn">GO!</button>
                 </form>
             </div>
         
             <div class="form-group">
-                <label for="category-select" class="label">Search by Violation Type:</label>
+                <label for="category-select" class="label">Filter by Violation Type:</label>
                 <br>
                 <form action="{{ url_for('redirect_to_category') }}" method="post">
                     <select name="category_slug" id="category-select">
@@ -42,7 +42,7 @@
                         <option value="{{ slug }}">{{ name[1] }}</option>
                         {% endfor %}
                     </select>
-                    <button type="submit">Go</button>
+                    <button type="submit" class="btn">GO!</button>
                 </form>
             </div>
         </div>

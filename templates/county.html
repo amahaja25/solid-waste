@@ -12,6 +12,7 @@
       <div class="jumbotron">
         <div class="container">
           <h1 class="display-4"> {{ county.county }} has recieved <div class="total">{{ county_total_count }}</div> violations.</h1>
+          <h2>The site with the most violations is {{ most_violations_info.site_name }} with <div class="total">{{ most_violations_info.count }}</div>.</h2>
           <h1 class="display-4"></h1>
           <br>
           <table border=1 cellpadding=7>
@@ -29,15 +30,39 @@
           <tr>
             <td><a href="{{ url_for('detail', id=violation.id) }}">View</a></td>
             <td><a href="{{ url_for('site', site_no=violation.site_no) }}">{{ violation.site_name }}</a></td>
-            <td><a href="{{ url_for('county', slug=violation.county_obj.slug) }}">{{ violation.county }}</td>
+            <td>{{ violation.county }}</td>
             <td>{{ violation.violation_date }}</td>
             <td>{{ violation.resolved_date if violation.resolved_date not in ['', 'None'] else 'None' }}</td>
             <td>{{ violation.media }}</td>
             <td>{{ violation.status }}</td>
-
           </tr>
           {% endfor %}
         </table>
+        <nav>
+          <ul class="pagination">
+              <li class="page-item {{ 'disabled' if current_page <= 1 else '' }}">
+                  <a class="page-link" href="?page={{ current_page - 1 }}">Previous</a>
+              </li>
+      
+              <!-- Calculate start and end page numbers -->
+              {% set start_page = current_page - 2 if current_page - 2 > 0 else 1 %}
+              {% set end_page = start_page + 4 if start_page + 4 <= total_pages else total_pages %}
+              {% if end_page - start_page < 4 and start_page != 1 %}
+                  {% set start_page = end_page - 4 if end_page - 4 > 0 else 1 %}
+              {% endif %}
+      
+              <!-- Generate page number links -->
+              {% for i in range(start_page, end_page + 1) %}
+              <li class="page-item {% if i == current_page %}active{% endif %}">
+                  <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+              </li>
+              {% endfor %}
+      
+              <li class="page-item {{ 'disabled' if current_page >= total_pages else '' }}">
+                  <a class="page-link" href="?page={{ current_page + 1 }}">Next</a>
+              </li>
+          </ul>
+      </nav>
         </div>
       </div>
     </div>
