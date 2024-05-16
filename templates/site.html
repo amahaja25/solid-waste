@@ -15,7 +15,7 @@
             <a class="navbar-brand" href="/">&#127968 Home | Solid Waste Violations</a>
           </nav>
           <h1>{{ site_name }}</h1>
-          <h2>This site is located at {{ street_address }}, {{ city_state_zip }} in {{ county }} County.</h2>
+          <h2>This site is located at {{ street_address }}, {{ city_state_zip }} in {{ county }}.</h2>
           <h2>{{ site_name }} has recieved <div class="total">{{ site_violation_count }}</div> violations.</h2>
           <table id="violations" class="display">
             <thead>
@@ -45,7 +45,7 @@
         </table>
         <script type="text/javascript">
           let table = new DataTable('#violations', {
-          responsive: true, paging: false, order: [[3, 'desc']]});
+          responsive: true, paging: false, scrollY: 250, order: [[3, 'desc']]});
       </script>
         </div>
       </div>
