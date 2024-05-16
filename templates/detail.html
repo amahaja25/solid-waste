@@ -13,7 +13,7 @@
         <div class="container">
           <h1>Violation Details</h1>
           <h2 class="display-4"><a href="{{ url_for('site', site_no=violation.site_no) }}">{{ site_name }}</a>, located in {{ county }}, recieved a {{ violation_type }} violation on {{ date_start }}.</h1>
-          <h2>This site has recieved {{ other_violation_count }} other violations.</h2>
+          <h2>This site has recieved <div class="total">{{ other_violation_count }}</div> other violations.</h2>
           <br>
           <br>
         </div>
