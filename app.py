@@ -177,23 +177,17 @@ def county(slug):
     county_total_count = Violation.select().where(Violation.county == county.county).count()
 
 
-    page = request.args.get('page', 1, type=int)  
-    page_size = 20 
 
     total_violations = (Violation
                         .select()
                         .where(Violation.county == county.county)   
                         .count())
     
-    total_pages = (total_violations + page_size - 1) // page_size
     
-
-    start_page = max(page - 2, 1)
-    end_page = min(page + 2, total_pages)
 
     violation_list = Violation.select().where(
         Violation.county == county.county
-    ).order_by(Violation.violation_date.desc()).paginate(page, page_size)
+    ).order_by(Violation.violation_date.desc())
 
 
     most_violations_site = (
@@ -213,7 +207,7 @@ def county(slug):
     }
 
 
-    return render_template('county.html', county=county, county_total_count=county_total_count, violation_list = violation_list,most_violations_info=most_violations_info,total_pages=total_pages, current_page=page,start_page=start_page, end_page=end_page)
+    return render_template('county.html', county=county, county_total_count=county_total_count, violation_list = violation_list,most_violations_info=most_violations_info)
 
 @app.route("/redirect-to-category", methods=["POST"])
 def redirect_to_category():
