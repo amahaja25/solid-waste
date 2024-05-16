@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
 from peewee import *
 app = Flask(__name__)
@@ -21,10 +21,10 @@ categories_description = {
     'balloon': 'According to a Maryland law passed in the 2021 legislative session, people may not intentionally release a balloon into the atmosphere or participate in mass balloon releases, which consist of 10 or more balloons being released into the atmosphere. <br><br> Exceptions include unintentionally released balloons and balloons released for meteorological or official scientific research purposes.',
     'wood-waste': 'According to the MDE, natural wood waste generally occurs when land is cleared for construction. This type of waste consists of discarded vegetation “in its natural state.” <br><br> Natural wood waste has to be disposed of in specific Natural Wood Waste Recycling Facilities, which process tree stumps, logs and limbs. The facilities make mulch and compost out of the wood waste and distribute or sell it afterwards, according to the MDE.',
     'hazardous-waste': 'Hazardous waste is any substance that threatens to harm human health or the environment or has the potential to “cause or contribute to an increase in mortality or serious illness,” according to the MDE. <br><br> This form of waste must be shipped to a specific hazardous waste facility that accepts it, but if a person has the appropriate permit, they may treat it themself. MDE inspectors routinely inspect hazardous waste generators and facilities unannounced. Household waste is not regulated as hazardous waste.',
-    'composting': 'g',
+    'composting': 'The MDE issues permits that are necessary to construct or operate a composting facility in the state, according to Maryland law. Exemptions are applicable in instances such as residential composting, composting sites that are less than 5,000 square feet or facilities that are managed by the government and compost animal carcasses as part of maintenance activities.<br><br>Composting facilities should not create disruptive odors or air pollution, harm the environment, lead to insect, rodent or animal infestations, leak pollutants to state waters or generally create hazards to public health and safety, according to the MDE.',
     'scrap-tire': 'Illegal stockpiles of scrap tires, which are tires that are no longer suitable for their original purpose, can lead to fire hazards, become breeding grounds for mosquitoes or disease-carrying agents and are “unsightly,” according to MDE’s website. <br><br>According to the Maryland Code of the Environment, people may only dispose of scrap tires through approved facilities or licensed scrap tire haulers.',
     'sewage': 'Sewage sludge — also known as biosolids — is the semi-solid residue that is produced when sewage or wastewater is treated and decontaminated. <br><br> According to Maryland law, people are not allowed to transport, compost, dispose or use sewage sludge unless they have a Sewage Sludge Utilization Permit from MDE.',
-    'refuse-disposal': 'f',
+    'refuse-disposal': 'According to Maryland law, anyone who installs, alters or uses a refuse disposal system is required to have a permit. These facilities include municipal, rubble, industrial waste, and land clearing debris landfills as well as incinerators, processing facilities and transfer stations.',
     'surface-water': 'Industrial facilities that release wastewater or stormwater into Maryland surface waters such as  lakes, creeks, streams, rivers, reservoirs and the ocean, are required to have permits from the MDE to do so. The permit makes sure that the discharge meets Maryland water quality standards.'
 }
 
@@ -45,7 +45,8 @@ class Violation(Model):
     media = CharField()
     violation_date = DateTimeField()
     status = CharField()
-    resolved_date = DateTimeField()  
+    resolved_date = DateTimeField()
+    violation = CharField()
     id = CharField(primary_key=True, unique=True)
 
     @property
@@ -87,6 +88,21 @@ def index():
         'count': most_common.count
     }
 
+    site_with_most_violations = (
+        Violation
+        .select(Violation.site_no, Violation.site_name, fn.COUNT(Violation.site_no).alias('count'))
+        .group_by(Violation.site_no, Violation.site_name)
+        .order_by(fn.COUNT(Violation.site_no).desc())
+        .limit(1)
+        .get()
+    )
+    
+    site_with_most_violations_info = {
+        'site_no': site_with_most_violations.site_no,
+        'site_name': site_with_most_violations.site_name,
+        'count': site_with_most_violations.count
+    }
+
     template = 'index.html'
     return render_template(template,
     total_count = total_count,
@@ -94,11 +110,10 @@ def index():
     categories=categories,
     most_violations=most_violations_info,
     most_common=most_common_info,
-    violation_name=violation_name
+    violation_name=violation_name,
+    site_with_most_violations=site_with_most_violations_info
     )
 
-
-from datetime import datetime
 
 @app.route("/violation/<id>")
 def detail(id):
@@ -110,21 +125,15 @@ def detail(id):
     else:
         date_start = 'Unknown'
 
-    if hasattr(violation, 'resolved_date') and violation.resolved_date:
-        date_resolved = datetime.strptime(violation.resolved_date, "%Y/%m/%d").strftime('%B %d, %Y')
-    else:
-        date_resolved = 'Not resolved'
     
     other_violation_count = Violation.select().where(Violation.site_no == violation.site_no).count() - 1
 
-    
 
     return render_template('detail.html', 
                            street_address=violation.street_address, 
                            county=violation.county, 
                            site_name=violation.site_name,
                            date_start=date_start,
-                           date_resolved=date_resolved,
                            violation_type=violation.media,
                            violation=violation,
                            other_violation_count=other_violation_count)  

@@ -6,14 +6,18 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   </head>
   <body>
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="/">Solid Waste Violations</a>
-      </nav>
       <div class="jumbotron">
         <div class="container">
+          <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="/">&#127968 Home | Solid Waste Violations</a>
+          </nav>
           <h1>Violation Details</h1>
-          <h2 class="display-4"><a href="{{ url_for('site', site_no=violation.site_no) }}">{{ site_name }}</a>, located in {{ county }}, recieved a {{ violation_type }} violation on {{ date_start }}.</h1>
-          <h2>This site has recieved <div class="total">{{ other_violation_count }}</div> other violations.</h2>
+          <h2 class="display-4"><b><a href="{{ url_for('site', site_no=violation.site_no) }}">{{ site_name }}</a></b>, located in <b><a href="{{ url_for('county', slug=violation.county_obj.slug) }}">{{ county }}</a></b>, recieved a {{ violation_type }} violation on {{ date_start }}. This site has recieved <div class="total">{{ other_violation_count }}</div> other violations.</h1>
+          <h2>The current status of this violation is {{ violation.status }}.</h2>
+          <h3>Additional information from the Maryland Department of the Environment:</h3>
+          <h2>
+            <ul>
+            <li>{{ violation.violation }}</li></ul></h2>
           <br>
           <br>
         </div>

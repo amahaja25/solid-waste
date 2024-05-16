@@ -9,11 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   </head>
   <body>
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="/">Solid Waste Violations</a>
-      </nav>
       <div class="jumbotron">
         <div class="container">
+          <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="/">&#127968 Home | Solid Waste Violations</a>
+          </nav>
           <h1>{{ site_name }}</h1>
           <h2>This site is located at {{ street_address }}, {{ city_state_zip }} in {{ county }} County.</h2>
           <h2>{{ site_name }} has recieved <div class="total">{{ site_violation_count }}</div> violations.</h2>
@@ -45,7 +45,7 @@
         </table>
         <script type="text/javascript">
           let table = new DataTable('#violations', {
-          responsive: true, paging: false, scrollY: 400});
+          responsive: true, paging: false, order: [[3, 'desc']]});
       </script>
         </div>
       </div>
