@@ -2,6 +2,7 @@ from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for
 from peewee import *
 app = Flask(__name__)
+app.static_folder = 'static'
 
 db = SqliteDatabase('solid_waste.db')
 db.connect()
