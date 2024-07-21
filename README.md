@@ -4,7 +4,7 @@
 To deploy my news application, open a GitHub codespace and enter these two lines in the terminal:
 
 ```
-pip install flask peewee
+pip install flask peewee geopy
 python app.py
 ```
 # Updates log
