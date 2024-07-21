@@ -7,6 +7,10 @@ To deploy my news application, open a GitHub codespace and enter these two lines
 pip install flask peewee
 python app.py
 ```
+# Updates log
+<b>7/21 update </b>
+I used Leaflet + a simple script to incorporate locator maps on each site page. To do this, I had to geocode each address to get the lat and long, and to do that, I had to join two of the rows in the data to create a full address. I used Nominatim with geopy, and I think I probably hit the rate limit, because only some of the addresses are actually geocoded and therefore a lot of the sites just have gray boxes instead of functional maps. Going to see if there are alternatives that I could use like the Google Maps API or another option. I really, really like what the maps add to this app in being able to see where the sites are and particularly how big or small they are! 
+
 <b>Final final project update 5/15 --</b>
 This news app looks very different to what I had envisioned starting out. Because of that, I am a little disappointed with just how much I was unable to accomplish, but I still think I was able to create a product that does at least some of what I set out to achieve, which was to create something that displays the solid waste data in a better fashion than it currently is on the Maryland Department of the Environment website, and I think I did that! Even just the few paragraphs I added to each of the violation type pages give at least a little more context to what the data actually is and the significance of one of these violations, which is definitely a step up from the original site, in my opinion. My news app is just deployed within GitHub Codespaces right now, but I plan to put it on a GitHub pages site after this.
 
