@@ -2,6 +2,8 @@ import os
 import csv
 import requests
 import pandas as pd
+from geopy.geocoders import Nominatim
+from time import sleep
 
 def clean_column_names(df):
     df.columns = df.columns.str.lower().str.replace(r'[^\w\s]', '', regex=True).str.replace(' ', '_')
@@ -17,7 +19,35 @@ def download_and_clean(url, filename):
     df = pd.read_csv(filename)
     df = clean_column_names(df)
 
+    df['street_address'] = df['street_address'].str.replace(r'\bRoad\b', 'Rd', regex=True)
+    df['street_address'] = df['street_address'].str.replace(r'\bLane\b', 'Ln', regex=True)
+
+
     df['city_state_zip'] = df['city_state_zip'].str.replace(r',(\S)', r', \1', regex=True)
+    df['full_address'] = df['street_address'] + ', ' + df['city_state_zip']
+
+
+
+    geolocator = Nominatim(user_agent="app.py")
+    
+    def geocode_address(full_address):
+        try:
+            location = geolocator.geocode(full_address)
+            if location:
+                return location.latitude, location.longitude
+            else:
+                return None, None
+        except Exception as e:
+            return None, None
+
+    df['latitude'] = None
+    df['longitude'] = None
+
+    for index, row in df.iterrows():
+        lat, lon = geocode_address(row['full_address'])
+        df.at[index, 'latitude'] = lat
+        df.at[index, 'longitude'] = lon
+        sleep(1)
 
     if 'violation_date' in df.columns:
         df['violation_date'] = pd.to_datetime(df['violation_date'], errors='coerce').dt.strftime('%Y/%m/%d')

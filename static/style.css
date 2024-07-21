@@ -126,4 +126,7 @@ select {
     color: #fb8500
 }
 
-
+#map {
+    height: 400px;
+    width: 100%;
+}

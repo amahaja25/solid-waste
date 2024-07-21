@@ -49,6 +49,8 @@ class Violation(Model):
     resolved_date = DateTimeField()
     violation = CharField()
     id = CharField(primary_key=True, unique=True)
+    latitude = FloatField()
+    longitude = FloatField()
 
     @property
     def county_obj(self):
@@ -142,6 +144,8 @@ def detail(id):
 @app.route("/site/<site_no>")
 def site(site_no):
     template = 'site.html'
+    
+
 
     site_number = Violation.get(Violation.site_no == site_no)
 
@@ -157,6 +161,9 @@ def site(site_no):
 
     site_violation_count = violation_list.count()
 
+    lat = site_number.latitude
+    lng = site_number.longitude
+
     return render_template(template,
     site_name = site_number.site_name,
     street_address = site_number.street_address,
@@ -164,7 +171,7 @@ def site(site_no):
     city_state_zip = site_number.city_state_zip,
     violation_list = violation_list,
     site_violation_count = site_violation_count,
-    )
+    lat=lat, lng=lng)
 
 @app.route("/redirect-to-county", methods=["POST"])
 def redirect_to_county():

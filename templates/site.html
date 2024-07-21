@@ -7,6 +7,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"">
     <script src="https://cdn.datatables.net/v/dt/dt-2.0.7/r-3.0.2/datatables.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+   
+    <!--Leaflet-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+    integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+    integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+    crossorigin=""></script>
   </head>
   <body>
       <div class="jumbotron">
@@ -15,8 +23,21 @@
             <a class="navbar-brand" href="/">&#127968 Home | Solid Waste Violations</a>
           </nav>
           <h1>{{ site_name }}</h1>
-          <h2>This site is located at {{ street_address }}, {{ city_state_zip }} in {{ county }}.</h2>
+          <h2>This site is located at {{ street_address }}, {{ city_state_zip }}, in {{ county }}.</h2>
           <h2>{{ site_name }} has recieved <div class="total">{{ site_violation_count }}</div> violations.</h2>
+          
+          <br>
+          <div id="map">
+            <script type="text/javascript">
+              var map = L.map('map').setView([{{ lat }}, {{ lng }}], 16);
+              L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 19,
+              attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              }).addTo(map);
+              var marker = L.marker([{{ lat }}, {{ lng }}]).addTo(map);
+          </script>
+          </div>
+          
           <table id="violations" class="display">
             <thead>
             <tr>
