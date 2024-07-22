@@ -58,7 +58,7 @@
             <td><a href="{{ url_for('county', slug=violation.county_obj.slug) }}">{{ violation.county }}</td>
             <td>{{ violation.violation_date if violation.violation_date not in ['', 'None'] else 'None' }}</td>
             <td>{{ violation.resolved_date if violation.resolved_date not in ['', 'None'] else 'None' }}</td>
-            <td>{{ violation.media }}</td>
+            <td><a href="{{ url_for('category', category_slug=violation.media_slug) }}">{{ violation.media }}</a></td>
             <td>{{ violation.status }}</td>
           </tr>
           {% endfor %}

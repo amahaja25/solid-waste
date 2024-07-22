@@ -7,6 +7,8 @@ To deploy my news application, open a GitHub codespace and enter these two lines
 pip install flask peewee geopy
 python app.py
 ```
+
+Then, click the little button on the popup that says "Open in Browser."
 # Updates log
 <b>7/21 update </b>
 I used Leaflet + a simple script to incorporate locator maps on each site page. To do this, I had to geocode each address to get the lat and long, and to do that, I had to join two of the rows in the data to create a full address. I used Nominatim with geopy, and I think I probably hit the rate limit, because only some of the addresses are actually geocoded and therefore a lot of the sites just have gray boxes instead of functional maps. Going to see if there are alternatives that I could use like the Google Maps API or another option. I really, really like what the maps add to this app in being able to see where the sites are and particularly how big or small they are! 

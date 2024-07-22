@@ -130,3 +130,7 @@ select {
     height: 400px;
     width: 100%;
 }
+
+.info-link {
+    text-decoration: underline;
+}
